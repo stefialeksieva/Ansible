@@ -9,6 +9,8 @@
     image: "ami-0a0d2ca99b40eb592"
     instance_type: "t2.micro"
     sec_group: "security-group-test"
+    ec2_access_key: "{{ lookup('ec2_access_key', '/etc/ansible/vars/vars.yaml') }}"
+    ec2_secret_key: "{{ lookup('ec2_secret_key', '/etc/ansible/vars/vars.yaml') }}"
 
   tasks:
     - name: Provisioning EC2 instances
