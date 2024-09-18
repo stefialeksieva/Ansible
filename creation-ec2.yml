@@ -3,7 +3,6 @@
 
 - name: Creating an EC2 Instance with ansible cli
   hosts: localhost
-
   vars:
     region: eu-central-1
     image: "ami-0a0d2ca99b40eb592"
