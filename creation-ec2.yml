@@ -6,25 +6,24 @@
   tags: provisioning
 
   vars:
-    keypair: id_rsa
-    instance_type: t2.micro
+    instance_type: t2.small
     instance_name: test-ec2-instance
-    image: ami-0a0d2ca99b40eb592
+    image: ami-00f07845aed8c0ee7
     wait: yes
     group: webserver
     region: eu-central-1
     security_group: security-group-test
-    aws_access_key: ""
-    aws_secret_key: ""
+    ec2_access_key: ""
+    ec2_secret_key: ""
 
   tasks:
   - name: configuring security group for the instance
     ec2_group:
         name: "{{ security_group }}"
-        description: security-group-test 
+        description: security-group-test
+        ec2_access_key: "{{ ec2_access_key }}"
+        ec2_secret_key: "{{ ec2_secret_key }}"
         region: "{{ region }}"
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
         rules:
             - proto: tcp
               from_port: 22
@@ -45,80 +44,9 @@
     ec2_instance:
         security_group: "{{ security_group }}"
         name: "{{ instance_name }}"
-        key_name: "{{ keypair }}"
+        ec2_access_key: "{{ ec2_access_key }}"
+        ec2_secret_key: "{{ ec2_secret_key }}"
         instance_type: "{{ instance_type}}"
         image_id: "{{ image }}"
         region: "{{ region }}"
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
         wait_timeout: 3
-
---- 
-# Creating an EC2 Instance 
-
-- name: Creating an EC2 Instance with ansible cli
-  hosts: localhost
-  vars:
-    region: eu-central-1
-    image: "ami-0a0d2ca99b40eb592"
-    id: "test-stefi"
-    instance_type: "t2.micro"
-    sec_group: "security-group-test"
-    ec2_access_key: ""
-    ec2_secret_key: " "
-    key_name: ansible-demo
-    vpc_name: ansible-vpc-test
-    cidr_block: "10.10.0.0/16"
-    cidr: "10.10.0.0/24"
-
-  tasks:
-    - name: Create a new VPC 
-      amazon.aws.ec2_vpc_net:
-        name: "Ansible-Test"
-        cidr_block: "{{ cidr_block }}"
-        ec2_access_key: "{{ ec2_access_key }}"
-        ec2_secret_key: "{{ ec2_secret_key }}"
-        region: "{{ region }}"
-      register: vpc
-
-
-    - name: Create a new Subnet
-      amazon.aws.ec2_vpc_subnet:
-        ec2_access_key: "{{ ec2_access_key }}"
-        ec2_secret_key: "{{ ec2_secret_key }}"
-        cidr: "{{ cidr }}"
-        region: "{{ region }}"
-        vpc_id: "{{ vpc.vpc.id }}"
-      register: subnet
-
-    - name: Create a Security Group  
-      amazon.aws.ec2_security_group:
-        name: "Ansible-Test-Security-Group"
-        description: "Ansible-Testing"
-        ec2_access_key: "{{ ec2_access_key }}"
-        ec2_secret_key: "{{ ec2_secret_key }}"
-        vpc_id: "{{ vpc.vpc.id }}"
-        region: "{{ region }}"
-        rules:
-          - proto: tcp
-            ports:
-            - 80
-            cidr_ip: 0.0.0.0/0
-            rule_desc: "allow all on port 80"
-      register: security_group
- 
-    - name: Launch an EC2 Instance
-      amazon.aws.ec2_instance:
-        name: "Test-Ansible"
-        key_name: "{{ key_name }}"
-        ec2_access_key: "{{ ec2_access_key }}"
-        ec2_secret_key: "{{ ec2_secret_key }}"
-        vpc_subnet_id: "{{ subnet.subnet.id }}"
-        instance_type: "{{ instance_type }}"
-        security_group: "{{ security_group.group_id  }}"
-        count: 1
-        wait: yes
-        aws_region: "ap-south-1"
-        network:
-          assign_public_ip: true
-        image_id: "{{ ami }}"
