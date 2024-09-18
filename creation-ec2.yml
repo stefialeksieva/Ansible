@@ -12,6 +12,7 @@
     wait: yes
     group: webserver
     region: eu-central-1
+    lb: alb
     security_group: security-group-test
     ec2_access_key: ""
     ec2_secret_key: ""
@@ -40,6 +41,7 @@
         rules_egress:
             - proto: all
               cidr_ip: 0.0.0.0/0
+
   - name: creating ec2 instance
     ec2_instance:
         security_group: "{{ security_group }}"
@@ -50,3 +52,23 @@
         image_id: "{{ image }}"
         region: "{{ region }}"
         wait_timeout: 3
+
+  - name: creating Load Balancer of ec2
+    ec2_elb_lb:
+        security_group: "{{ security_group }}"
+        name_lb: "{{ lb }}"
+        state: present
+        ec2_access_key: "{{ ec2_access_key }}"
+        ec2_secret_key: "{{ ec2_secret_key }}"
+        region: "{{ region }}"
+        listerners:
+          - protocol: HTTP
+            load_balancer_port: 80
+
+  - name: adding instance ec2 to LB
+    ec2_lb:
+        security_group: "{{ security_group }}"
+        target_id: "{{ instance_name }}"
+        state: present
+        ec2_access_key: "{{ ec2_access_key }}"
+        ec2_secret_key: "{{ ec2_secret_key }}"
