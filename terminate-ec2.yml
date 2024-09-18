@@ -3,6 +3,8 @@
   hosts: localhost
   connection: local
   gather_facts: False
+  vars_files:
+    - /etc/ansible/vars/vars.yaml
 
   vars:
     instance_type: t2.small
@@ -12,8 +14,6 @@
     group: webserver
     region: eu-central-1
     security_group: security-group-test
-    ec2_access_key: ""
-    ec2_secret_key: ""
 
   tasks:
     - name: terminating ec2 instance
