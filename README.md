@@ -6,10 +6,10 @@ There are two Ansible yml playbooks:
 - creation-ec2.yml
 - terminate-ec2.yml
 
-With the creation-ec2.yml - the Ansible playbook is reading the varables, configurating security group and creating the ec2 instance in AWS
-With the terminate-ec2.yml - the Ansible playbook is reading the varables, terminating the instance and removing te security group which was created with creation-ec2.yml 
+With the creation-ec2.yml - the Ansible playbook is reading the variables, configuring the security group and creating the ec2 instance in AWS
+With the terminate-ec2.yml - the Ansible playbook is reading the variables, terminating the instance and removing the security group which was created with creation-ec2.yml 
 
-I am using my AWS test account which is only for a personal tests and examples. 
+I am using my AWS test account which is only for personal tests and examples. 
 Ansible and git are installed on the ec2 instance and you could clone the repository there in order to have the files and execute them with ansible-playbook.
 
 ## Clone repo
